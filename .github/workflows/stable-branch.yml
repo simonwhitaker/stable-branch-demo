@@ -1,0 +1,23 @@
+name: Update stable branch
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  update_stable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: stable
+      - name: Update stable branch
+        run: |
+          git fetch
+          if git merge --ff-only $GITHUB_SHA; then
+            git push origin stable
+          else
+            echo "Looks like this commit is behind the current stable. Skipping."
+          fi
+          git checkout main
